@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#FFF0F5] via-[#FFF5F8] to-[#F8E8F0] flex flex-col font-sans">
+
+    <div class="pt-8 px-10">
+        <a href="/" class="flex items-center gap-2 text-[#9B6B82] hover:text-[#C4527A] transition-colors text-sm font-medium group decoration-0">
+            <i data-lucide="arrow-left" width="16" height="16" class="group-hover:-translate-x-0.5 transition-transform"></i>
+            Back to Home
+        </a>
+    </div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-8 py-10">
+        <div class="w-full max-w-lg">
+            
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-[#E8A0B8] to-[#D4729A] rounded-2xl shadow-[0_6px_20px_rgba(196,82,122,0.3)] mb-5">
+                    <i data-lucide="calendar" width="24" height="24" stroke-width="1.5" class="text-white"></i>
+                </div>
+                <h1 class="text-3xl font-light text-[#2D1B2E] tracking-tight">
+                    Period <span class="font-semibold text-[#C4527A]">Calculator</span>
+                </h1>
+                <p class="text-[#9B6B82] mt-2 text-sm font-light">
+                    Enter your cycle details for an instant prediction
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-[0_10px_50px_rgba(196,82,122,0.12)] border border-[#F4C2D4]/30 p-9">
+                <form id="periodForm" action="/calculator" method="POST" class="space-y-6">
+                    
+                    <div>
+                        <label class="block text-[#5C3D52] text-sm font-medium mb-2">
+                            Last Period Start Date
+                        </label>
+                        <input
+                            type="date"
+                            id="lastPeriodDate"
+                            name="lastPeriodDate"
+                            class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all"
+                        />
+                        <p id="error-lastPeriodDate" class="text-[#D4527A] text-xs mt-1.5 hidden"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-[#5C3D52] text-sm font-medium mb-2">
+                            Period Length <span class="text-[#C4A0B4] font-light">(days)</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="periodLength"
+                            name="periodLength"
+                            min="1"
+                            max="14"
+                            placeholder="e.g. 5"
+                            class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]"
+                        />
+                        <p id="error-periodLength" class="text-[#D4527A] text-xs mt-1.5 hidden"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-[#5C3D52] text-sm font-medium mb-2">
+                            Average Cycle Length <span class="text-[#C4A0B4] font-light">(days)</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="cycleLength"
+                            name="cycleLength"
+                            min="20"
+                            max="45"
+                            placeholder="e.g. 28"
+                            class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]"
+                        />
+                        <p id="error-cycleLength" class="text-[#D4527A] text-xs mt-1.5 hidden"></p>
+                    </div>
+
+                    <div class="bg-[#FFF0F5] rounded-xl px-4 py-3 flex gap-3 items-start">
+                        <i data-lucide="sparkles" width="15" height="15" class="text-[#D4729A] mt-0.5 flex-shrink-0"></i>
+                        <p class="text-[#9B6B82] text-xs leading-relaxed">
+                            A typical cycle ranges from <strong>21–35 days</strong>. If unsure, the average is 28 days.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="handleSubmit()"
+                        class="w-full py-4 bg-gradient-to-r from-[#D4729A] to-[#C4527A] text-white rounded-xl font-medium text-sm tracking-wide shadow-[0_6px_20px_rgba(196,82,122,0.35)] hover:shadow-[0_8px_28px_rgba(196,82,122,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                    >
+                        See Results
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const form = document.getElementById('periodForm');
+        const inputs = {
+            lastPeriodDate: document.getElementById('lastPeriodDate'),
+            periodLength: document.getElementById('periodLength'),
+            cycleLength: document.getElementById('cycleLength')
+        };
+
+        const errors = {
+            lastPeriodDate: document.getElementById('error-lastPeriodDate'),
+            periodLength: document.getElementById('error-periodLength'),
+            cycleLength: document.getElementById('error-cycleLength')
+        };
+
+        // Clear error messages when user starts typing
+        Object.keys(inputs).forEach(key => {
+            inputs[key].addEventListener('input', () => {
+                errors[key].classList.add('hidden');
+                errors[key].innerText = '';
+            });
+        });
+
+        function handleSubmit() {
+            let hasError = false;
+
+            if (!inputs.lastPeriodDate.value) {
+                showError('lastPeriodDate', "Please enter a date.");
+                hasError = true;
+            }
+
+            const pLen = parseInt(inputs.periodLength.value);
+            if (!inputs.periodLength.value || pLen < 1 || pLen > 14) {
+                showError('periodLength', "Enter a value between 1–14.");
+                hasError = true;
+            }
+
+            const cLen = parseInt(inputs.cycleLength.value);
+            if (!inputs.cycleLength.value || cLen < 20 || cLen > 45) {
+                showError('cycleLength', "Enter a value between 20–45.");
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Trigger the native form submission to the Python backend
+            form.submit();
+        }
+
+        function showError(field, message) {
+            errors[field].innerText = message;
+            errors[field].classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

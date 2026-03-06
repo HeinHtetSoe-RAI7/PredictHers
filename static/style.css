@@ -1,0 +1,15 @@
+/* body {
+    text-align: center;
+    font-family: Arial;
+    background: #f4f4f4;
+    margin-top: 100px;
+}
+
+h1 {
+    color: #2c3e50;
+} */
+
+.letter-spacing-2 {
+    letter-spacing: 0.2em;
+}
+.hidden { display: none; }

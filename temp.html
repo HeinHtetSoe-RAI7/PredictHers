@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- <style>
+        .hidden { display: none; }
+    </style> -->
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#FFF0F5] via-[#FFF5F8] to-[#F8E8F0] flex flex-col font-sans">
+
+    <div class="pt-8 px-10">
+        <a href="/" class="flex items-center gap-2 text-[#9B6B82] hover:text-[#C4527A] transition-colors text-sm font-medium group decoration-0">
+            <i data-lucide="arrow-left" width="16" height="16" class="group-hover:-translate-x-0.5 transition-transform"></i>
+            Back to Home
+        </a>
+    </div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-8 py-10">
+        <div class="w-full max-w-lg">
+            
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-[#A0C4E8] to-[#7AAED4] rounded-2xl shadow-[0_6px_20px_rgba(100,160,210,0.3)] mb-5">
+                    <i data-lucide="bar-chart-2" width="24" height="24" stroke-width="1.5" class="text-white"></i>
+                </div>
+                <h1 class="text-3xl font-light text-[#2D1B2E] tracking-tight">
+                    Personal <span class="font-semibold text-[#C4527A]">Tracker</span>
+                </h1>
+                <p class="text-[#9B6B82] mt-2 text-sm font-light">
+                    Get a personalised prediction based on your history
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-[0_10px_50px_rgba(196,82,122,0.12)] border border-[#F4C2D4]/30 p-9">
+
+                <div id="section-choice">
+                    <p class="text-[#2D1B2E] text-base font-medium text-center mb-2">
+                        Do you have a username?
+                    </p>
+                    <p class="text-[#9B6B82] text-xs text-center mb-8 font-light">
+                        Select an option to continue
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="showSection('yes')" class="group flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-[#F0D0DF] hover:border-[#D4729A] hover:bg-[#FFF5F8] transition-all duration-200">
+                            <div class="w-12 h-12 rounded-xl bg-[#FFF0F5] group-hover:bg-[#FFE0EC] flex items-center justify-center transition-colors">
+                                <i data-lucide="user" width="22" height="22" stroke-width="1.5" class="text-[#C4527A]"></i>
+                            </div>
+                            <span class="text-[#2D1B2E] font-semibold text-sm">Yes</span>
+                            <span class="text-[#9B6B82] text-xs text-center font-light">I have an existing profile</span>
+                        </button>
+                        <button onclick="showSection('no')" class="group flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-[#F0D0DF] hover:border-[#D4729A] hover:bg-[#FFF5F8] transition-all duration-200">
+                            <div class="w-12 h-12 rounded-xl bg-[#FFF0F5] group-hover:bg-[#FFE0EC] flex items-center justify-center transition-colors">
+                                <i data-lucide="user-x" width="22" height="22" stroke-width="1.5" class="text-[#C4527A]"></i>
+                            </div>
+                            <span class="text-[#2D1B2E] font-semibold text-sm">No</span>
+                            <span class="text-[#9B6B82] text-xs text-center font-light">Enter my cycle history</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="section-yes" class="hidden">
+                    <button onclick="showSection('choice')" class="flex items-center gap-1 text-[#9B6B82] hover:text-[#C4527A] text-xs mb-6 transition-colors">
+                        <i data-lucide="arrow-left" width="13" height="13"></i>
+                        Change selection
+                    </button>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-[#5C3D52] text-sm font-medium mb-2">Username</label>
+                            <input type="text" id="yes-username" placeholder="Enter your username" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                        </div>
+                        <div>
+                            <label class="block text-[#5C3D52] text-sm font-medium mb-2">Last Period Start Date</label>
+                            <input type="date" id="yes-lastPeriodDate" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[#5C3D52] text-sm font-medium mb-2">Cycle Length <span class="text-[#C4A0B4] font-light">(days)</span></label>
+                                <input type="number" id="yes-cycleLength" min="20" max="45" placeholder="e.g. 28" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                            </div>
+                            <div>
+                                <label class="block text-[#5C3D52] text-sm font-medium mb-2">Period Length <span class="text-[#C4A0B4] font-light">(days)</span></label>
+                                <input type="number" id="yes-periodLength" min="1" max="14" placeholder="e.g. 5" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                            </div>
+                        </div>
+                    </div>
+                    <p id="error-yes" class="text-[#D4527A] text-xs mt-4 hidden"></p>
+                    <button onclick="submitYes()" class="w-full py-4 mt-7 bg-gradient-to-r from-[#D4729A] to-[#C4527A] text-white rounded-xl font-medium text-sm tracking-wide shadow-[0_6px_20px_rgba(196,82,122,0.35)] hover:shadow-[0_8px_28px_rgba(196,82,122,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                        See Results
+                    </button>
+                </div>
+
+                <div id="section-no" class="hidden">
+                    <button onclick="showSection('choice')" class="flex items-center gap-1 text-[#9B6B82] hover:text-[#C4527A] text-xs mb-6 transition-colors">
+                        <i data-lucide="arrow-left" width="13" height="13"></i>
+                        Change selection
+                    </button>
+
+                    <div class="bg-[#FFF0F5] rounded-xl px-4 py-3 flex gap-2 items-start mb-6">
+                        <i data-lucide="info" width="14" height="14" class="text-[#D4729A] mt-0.5 flex-shrink-0"></i>
+                        <p class="text-[#9B6B82] text-xs leading-relaxed">
+                            Enter your last <strong>3 period start dates</strong> so we can calculate your average cycle length automatically.
+                        </p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="space-y-3">
+                            <label class="block text-[#5C3D52] text-sm font-medium">Previous 3 Months Start Dates</label>
+                            
+                            <div class="flex items-center gap-3">
+                                <span class="text-[#C4A0B4] text-xs w-28 flex-shrink-0">Month 1 (oldest)</span>
+                                <input type="date" id="no-month1" class="flex-1 px-4 py-3 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[#C4A0B4] text-xs w-28 flex-shrink-0">Month 2</span>
+                                <input type="date" id="no-month2" class="flex-1 px-4 py-3 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[#C4A0B4] text-xs w-28 flex-shrink-0">Month 3 (newest)</span>
+                                <input type="date" id="no-month3" class="flex-1 px-4 py-3 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[#5C3D52] text-sm font-medium mb-2">Period Length <span class="text-[#C4A0B4] font-light">(days)</span></label>
+                            <input type="number" id="no-periodLength" min="1" max="14" placeholder="e.g. 5" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[#5C3D52] text-sm font-medium mb-2">Age</label>
+                                <input type="number" id="no-age" min="10" max="60" placeholder="e.g. 24" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                            </div>
+                            <div>
+                                <label class="block text-[#5C3D52] text-sm font-medium mb-2">BMI</label>
+                                <input type="number" id="no-bmi" min="10" max="60" step="0.1" placeholder="e.g. 22.5" class="w-full px-4 py-3.5 rounded-xl border border-[#F0D0DF] bg-[#FFFAFB] text-[#2D1B2E] text-sm focus:outline-none focus:ring-2 focus:ring-[#E8A0B8] focus:border-transparent transition-all placeholder-[#C4A0B4]">
+                            </div>
+                        </div>
+                    </div>
+                    <p id="error-no" class="text-[#D4527A] text-xs mt-4 hidden"></p>
+                    <button onclick="submitNo()" class="w-full py-4 mt-7 bg-gradient-to-r from-[#D4729A] to-[#C4527A] text-white rounded-xl font-medium text-sm tracking-wide shadow-[0_6px_20px_rgba(196,82,122,0.35)] hover:shadow-[0_8px_28px_rgba(196,82,122,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                        See Results
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Section Toggling Logic
+        const sections = {
+            choice: document.getElementById('section-choice'),
+            yes: document.getElementById('section-yes'),
+            no: document.getElementById('section-no')
+        };
+
+        function showSection(sectionName) {
+            // Hide all
+            Object.values(sections).forEach(el => el.classList.add('hidden'));
+            // Show requested
+            sections[sectionName].classList.remove('hidden');
+            
+            // Clear errors when switching
+            document.getElementById('error-yes').classList.add('hidden');
+            document.getElementById('error-no').classList.add('hidden');
+        }
+
+        // --- SUBMIT YES PATH ---
+        function submitYes() {
+            const username = document.getElementById('yes-username').value;
+            const lastPeriodDate = document.getElementById('yes-lastPeriodDate').value;
+            const cycleLength = document.getElementById('yes-cycleLength').value;
+            const periodLength = document.getElementById('yes-periodLength').value;
+            const errorEl = document.getElementById('error-yes');
+
+            if (!username || !lastPeriodDate || !cycleLength || !periodLength) {
+                errorEl.innerText = "Please fill in all required fields.";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const params = new URLSearchParams({
+                username: username,
+                lastPeriodDate: lastPeriodDate,
+                cycleLength: cycleLength,
+                periodLength: periodLength,
+                source: "tracker-yes"
+            });
+
+            window.location.href = "result?" + params.toString();
+        }
+
+        // --- SUBMIT NO PATH ---
+        function submitNo() {
+            const m1 = document.getElementById('no-month1').value;
+            const m2 = document.getElementById('no-month2').value;
+            const m3 = document.getElementById('no-month3').value;
+            const periodLength = document.getElementById('no-periodLength').value;
+            const age = document.getElementById('no-age').value;
+            const bmi = document.getElementById('no-bmi').value;
+            const errorEl = document.getElementById('error-no');
+
+            if (!m1 || !m2 || !m3 || !periodLength) {
+                errorEl.innerText = "Please fill in all required fields (Dates and Period Length).";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            // Calculation Logic
+            const d1 = new Date(m1);
+            const d2 = new Date(m2);
+            const d3 = new Date(m3);
+            
+            // Calculate gaps in days
+            const dayMs = 1000 * 60 * 60 * 24;
+            const gap1 = Math.round((d2 - d1) / dayMs);
+            const gap2 = Math.round((d3 - d2) / dayMs);
+            
+            // Average cycle
+            let avgCycle = Math.round((gap1 + gap2) / 2);
+            if (avgCycle <= 0 || isNaN(avgCycle)) avgCycle = 28; // Fallback
+
+            const params = new URLSearchParams({
+                lastPeriodDate: m3, // use most recent date
+                cycleLength: avgCycle,
+                periodLength: periodLength,
+                age: age,
+                bmi: bmi,
+                source: "tracker-no"
+            });
+
+            window.location.href = "result?" + params.toString();
+        }
+    </script>
+</body>
+</html>
