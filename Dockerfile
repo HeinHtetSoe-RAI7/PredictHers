@@ -5,7 +5,6 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Copy ONLY requirements first to leverage Docker cache
-# (This means it won't reinstall packages unless requirements.txt changes)
 COPY requirements.txt .
 
 # Install dependencies

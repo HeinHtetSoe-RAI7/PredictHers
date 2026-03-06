@@ -3,7 +3,6 @@ services:
     build: .
     container_name: flask_app
     volumes:
-      # Keeps your code synced for live development/reloading
       - .:/app
     ports:
       - "5000:5000"
