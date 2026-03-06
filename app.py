@@ -1,17 +1,20 @@
 from flask import Flask, render_template, request
-from calculator import calculate_period
-from tracker import calculate_tracker
+from utilities.calculator import calculate_period
+from utilities.tracker import predict_with_global_model, predict_with_personal_history
+from utilities.helper import parse_int, parse_float
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
+    """Home page route."""
     return render_template("index.html")
 
 
 @app.route("/calculator", methods=["GET", "POST"])
 def calculator():
+    """Period Calculator route."""
     if request.method == "POST":
         try:
             # Get data from the 'name' attributes in the HTML
@@ -24,53 +27,54 @@ def calculator():
 
             return render_template("result.html", **results)
         except (ValueError, TypeError) as e:
-            # Handle the error and display a message to the user
-            return render_template(
-                "calculator.html", error="Invalid input. Please enter valid numbers."
-            )
+            # Handle the error and display an error message to the user
+            return f"Error: {str(e)}"
 
     return render_template("calculator.html")
 
 
 @app.route("/tracker", methods=["GET", "POST"])
 def tracker():
+    """Period Tracker route."""
     if request.method == "POST":
-        # To check which form was submitted
         source = request.form.get("source")
 
-        if source == "tracker-yes":
-            # --- Form: "Yes, I have an existing profile" ---
-            username = request.form.get("username")
-            last_period_str = request.form.get("lastPeriodDate")
-            cycle_length = int(request.form.get("cycleLength"))
-            period_length = int(request.form.get("periodLength"))
+        try:
+            if source == "tracker-yes":
+                # Handle "Yes, I have an existing profile"
+                username = parse_int(request.form.get("username"))
+                last_period_str = request.form.get("lastPeriodDate")
+                cycle_length = parse_int(request.form.get("cycleLength"))
+                period_length = parse_int(request.form.get("periodLength"))
 
-            # ... perform calculations and return template ...
-            return f"Processed YES for {username}"
-
-        elif source == "tracker-no":
-            # --- Form: "No, enter my cycle history" ---
-            try:
-                # The required visible fields
+                results = predict_with_personal_history(
+                    user_id=username,
+                    manual_last_period_date=last_period_str,
+                    manual_avg_period_length=period_length,
+                    manual_all_time_avg_cycle=cycle_length,
+                )
+            elif source == "tracker-no":
+                # Handle "No, enter my cycle history"
                 month1_str = request.form.get("month1")
                 month2_str = request.form.get("month2")
                 month3_str = request.form.get("month3")
-                period_length = int(request.form.get("periodLength"))
+                period_length = parse_int(request.form.get("periodLength"))
+                age = parse_int(request.form.get("age"))
+                bmi = parse_float(request.form.get("bmi"))
 
-                # The optional fields (Age and BMI)
-                age = int(request.form.get("age"))
-                bmi = float(request.form.get("bmi"))
-
-                results = calculate_tracker(
-                    [month1_str, month2_str, month3_str], period_length
+                results = predict_with_global_model(
+                    last_3_dates=[month1_str, month2_str, month3_str],
+                    avg_length=period_length,
+                    bmi=bmi,
+                    age=age,
                 )
-                return render_template("result.html", **results)
+            else:
+                raise ValueError("Invalid source value.")
 
-            except (ValueError, TypeError):
-                return render_template(
-                    "tracker.html",
-                    error="Invalid input. Please enter valid dates and numbers.",
-                )
+            return render_template("result.html", **results)
+
+        except ValueError as e:
+            return f"Error: {str(e)}"
 
     return render_template("tracker.html")
 

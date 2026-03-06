@@ -187,7 +187,7 @@
             const periodLength = document.getElementById('yes-periodLength').value;
             const errorEl = document.getElementById('error-yes');
 
-            if (!username || !lastPeriodDate || !cycleLength || !periodLength) {
+            if (!username || !lastPeriodDate) {
                 errorEl.innerText = "Please fill in all required fields.";
                 errorEl.classList.remove('hidden');
                 return;
@@ -207,27 +207,11 @@
             const bmi = document.getElementById('no-bmi').value;
             const errorEl = document.getElementById('error-no');
 
-            if (!m1 || !m2 || !m3 || !periodLength) {
-                errorEl.innerText = "Please fill in all required fields (Dates and Period Length).";
+            if (!m1 || !m2 || !m3 || !periodLength || !age || !bmi) {
+                errorEl.innerText = "Please fill in all required fields.";
                 errorEl.classList.remove('hidden');
                 return;
             }
-
-            // // Calculation Logic
-            // const d1 = new Date(m1);
-            // const d2 = new Date(m2);
-            // const d3 = new Date(m3);
-            
-            // const dayMs = 1000 * 60 * 60 * 24;
-            // const gap1 = Math.round((d2 - d1) / dayMs);
-            // const gap2 = Math.round((d3 - d2) / dayMs);
-            
-            // let avgCycle = Math.round((gap1 + gap2) / 2);
-            // if (avgCycle <= 0 || isNaN(avgCycle)) avgCycle = 28;
-
-            // // Populate the hidden fields so Python can receive standard values
-            // document.getElementById('hidden-lastPeriodDate').value = m3;
-            // document.getElementById('hidden-cycleLength').value = avgCycle;
 
             // Submit the form securely via POST
             document.getElementById('form-no').submit();
